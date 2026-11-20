@@ -1,0 +1,17 @@
+node_modules/
+.local/
+.vscode-test/
+demo/flask*/
+demo/flask-host-*-outside.txt
+demo/evidence/
+output/
+ROUND1-DESIGN.md
+research/
+*.vsix
+.env
+.env.*
+!.env.example
+*.sqlite*
+__pycache__/
+*.pyc
+TrueFoundry_Forge-a-thon_*.pdf

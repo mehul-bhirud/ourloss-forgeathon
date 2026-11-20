@@ -1,0 +1,17 @@
+{
+  "manifest": {
+    "type": "custom",
+    "name": "tech-local-4b",
+    "base_url": "http://127.0.0.1:11434/v1",
+    "models": [
+      {
+        "name": "qwen3-instruct",
+        "model_id": "qwen3:4b-instruct-2507-q4_K_M",
+        "properties": {
+          "context_length": 4096,
+          "max_output_tokens": 1024
+        }
+      }
+    ]
+  }
+}

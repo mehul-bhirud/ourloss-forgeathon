@@ -1,0 +1,53 @@
+{
+  "name": "ourloss",
+  "displayName": "OurLoss for VS Code",
+  "description": "A TrueForge coding agent with inspectable context and hunk-by-hunk review.",
+  "version": "0.1.0",
+  "publisher": "ourloss",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/mehul-bhirud/ourloss-forgeathon.git" },
+  "engines": { "vscode": "^1.96.0", "node": ">=22" },
+  "categories": ["Other"],
+  "main": "./src/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "scripts": { "test": "node --test test/*.test.js" },
+  "contributes": {
+    "commands": [
+      { "command": "ourloss.open", "title": "OurLoss: Open Agent" },
+      { "command": "ourloss.editSelection", "title": "OurLoss: Edit Selection" },
+      { "command": "ourloss.undo", "title": "OurLoss: Undo Last Change" },
+      { "command": "ourloss.save", "title": "OurLoss: Save Reviewed Files" }
+    ],
+    "keybindings": [
+      { "command": "ourloss.editSelection", "key": "ctrl+alt+i", "mac": "cmd+alt+i", "when": "editorHasSelection && editorTextFocus" }
+    ],
+    "menus": {
+      "editor/context": [{ "command": "ourloss.editSelection", "when": "editorHasSelection", "group": "navigation@40" }]
+    },
+    "configuration": {
+      "title": "OurLoss",
+      "properties": {
+        "ourloss.trueForgeUrl": { "type": "string", "default": "http://127.0.0.1:8790", "description": "Local TrueForge origin." },
+        "ourloss.model": { "type": "string", "default": "tech-local-4b/qwen3-instruct", "description": "Primary TrueForge model reference, provider/alias." },
+        "ourloss.fallbackModel": { "type": "string", "default": "", "description": "Optional alternate model configured in TrueForge." },
+        "ourloss.modelParameters": { "type": "object", "default": {}, "scope": "machine", "description": "Optional TrueForge model parameters, such as reasoning_effort." },
+        "ourloss.eagerTools": { "type": "boolean", "default": false, "description": "Load all workspace tool schemas up front on providers where extra model turns are expensive." },
+        "ourloss.contextBytes": { "type": "number", "default": 2400, "minimum": 700, "maximum": 12000, "description": "Maximum bytes in the automatic context packet." },
+        "ourloss.python": { "type": "string", "default": "", "scope": "machine", "description": "Optional Python executable used to check draft syntax." },
+        "ourloss.rehearsal": {
+          "type": "object",
+          "scope": "machine",
+          "default": {},
+          "description": "Optional command you trust for comparing the baseline with selected hunks in temporary copies. Run explicitly from review.",
+          "properties": {
+            "executable": { "type": "string" },
+            "args": { "type": "array", "items": { "type": "string" } },
+            "label": { "type": "string" },
+            "evidenceFiles": { "type": "array", "maxItems": 8, "items": { "type": "string" } },
+            "timeoutMs": { "type": "number", "minimum": 1000, "maximum": 120000 }
+          }
+        }
+      }
+    }
+  }
+}
