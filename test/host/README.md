@@ -26,5 +26,5 @@ Assemble passing captures in A, B, C order. The editor stays on screen throughou
 ```powershell
 python -m pip install Pillow imageio-ffmpeg websocket-client reportlab
 python demo/assemble.py demo/evidence/clip-a demo/evidence/clip-b demo/evidence/clip-c --output output/OurLoss-Round1.mp4
-python demo/writeup.py --template
+python demo/writeup.py --final --evidence demo/round1-evidence.json
 ```

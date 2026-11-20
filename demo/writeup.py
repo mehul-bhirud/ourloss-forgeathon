@@ -13,6 +13,7 @@ import re
 from urllib.parse import urlsplit
 
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import (
@@ -27,11 +28,6 @@ from reportlab.platypus import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-NAVY = colors.HexColor("#102532")
-SLATE = colors.HexColor("#435B65")
-TEAL = colors.HexColor("#006A64")
-RULE = colors.HexColor("#D8E5E5")
-PALE = colors.HexColor("#F2F7F7")
 
 CRITERIA = (
     ("A1", "Inline edit"),
@@ -63,31 +59,30 @@ MODEL_TRIALS = (
 )
 
 DEFAULTS = {
-    "team": "Team OurLoss. Mehul Bhirud, Indian Institute of Information Technology Pune, GitHub mehul-bhirud.",
+    "team": "Mehul Bhirud, Team OurLoss\nIndian Institute of Information Technology Pune\nGitHub mehul-bhirud",
     "starting_point": (
-        "The extension was built from scratch. The competition workspace is the Flask 3.1.3 "
+        "OurLoss is an original VS Code extension. The demo starts from the unmodified Flask 3.1.3 "
         "release at commit 22d924701a6ae2e4cd01e9a15bbaf3946094af65."
     ),
     "architecture": [
-        "The extension streams local TrueForge 0.185.1 turns over HTTP. Its authenticated "
-        "loopback MCP connector exposes selected text, workspace search, excerpts, outlines, "
-        "in-memory edits, syntax checks, review, and read-only Git inspection. TrueForge "
-        "dispatches the model's tool calls and pauses on review_changes.",
-        "The editor shows a native diff and can run the same configured check on temporary "
-        "baseline and selected-hunk snapshots. Changing the selection clears the result. "
-        "A reviewer can return a failed diagnostic as a same-turn denial and request a "
-        "revised draft. On approval, the editor checks the base and applies the selected "
-        "hunks in one text edit batch. A verified selection's evidence ID and verdicts go "
-        "back to TrueForge with the apply result.",
+        "TrueForge 0.185.1 runs the model turn, dispatches MCP tools and streams events over HTTP. "
+        "VS Code owns the workspace index, in-memory draft and native diff. The authenticated "
+        "loopback connector gives the model narrow read and staging tools. TrueForge pauses "
+        "on review_changes so the editor can ask the user which hunks to apply.",
+        "Review runs the same check against two temporary workspace copies. One contains the baseline "
+        "and the other adds only the selected hunks. This catches selections that omit a change "
+        "needed for the feature to work. Changing the selection clears the result. A reviewer can send "
+        "a failed diagnostic back to the same turn. Before applying a verified selection, the editor "
+        "rechecks the workspace and sends the check verdicts and evidence ID to TrueForge.",
     ],
     "context": [
-        "The full instruction ranks tracked text by BM25-style term scores and filename "
-        "matches. A related test or guide can move up the ranking, and explicit @file or "
-        "@symbol references take priority. The editor shows the chosen paths, line ranges, "
-        "ranking reasons and byte budget.",
-        "The default automatic packet limit is 2,400 UTF-8 bytes. The agent can search "
-        "again and read narrow ranges. The default agent loads the outline tool on demand "
-        "to keep its schema out of turns that need only excerpts.",
+        "The extension ranks tracked and open text files using the full request, BM25-style "
+        "term scores and filename matches. It looks for related tests and guides alongside "
+        "the implementation. Explicit @file and @symbol mentions take priority. The panel "
+        "shows the paths, line ranges, match reasons and bytes used.",
+        "The initial packet is capped at 2,400 UTF-8 bytes. That keeps the request small and "
+        "can miss indirect relationships. The agent can search again or read narrow ranges. "
+        "The default configuration defers the outline tool until needed.",
     ],
     "model_setup": [
         "Tasks A and C use Qwen3-4B-Instruct-2507 through local Ollama. Task C starts with a "
@@ -98,27 +93,29 @@ DEFAULTS = {
         "recovery. TrueForge holds the model credentials and makes the inference calls.",
     ],
     "tools": (
-        "OpenAI Codex assisted the design, implementation and testing. The build uses "
-        "VS Code, TrueForge, Node.js, Git, and Python. Ollama served the local models. "
-        "The VS Code extension-host driver ran the recorded operations and checks. "
-        "Python captured the editor and ReportLab generated this PDF."
+        "OpenAI Codex assisted with design, implementation and testing. The prototype uses "
+        "VS Code, TrueForge, Node.js, Git and Python. An isolated VS Code extension host ran "
+        "the recorded checks. Python and FFmpeg produced the demo, and ReportLab generated this PDF."
     ),
-    "limitations": (
-        "The editor reviews text edits to existing files. It reports save failures per file. "
-        "Behavioral checks require available dependencies and a trusted verifier, and a pass "
-        "covers the cases that verifier ran. With another month, we would add language-service "
-        "symbol links, isolate check execution, and evaluate model reliability across repositories."
-    ),
+    "limitations": [
+        "The editor stages text edits to existing files. Behavioral checks need installed dependencies "
+        "and a trusted verifier, which runs as a normal local process. Passing the check establishes "
+        "only the behavior it exercised. Local models sometimes returned incomplete multi-file drafts, "
+        "and hosted runs could stall on rate limits or provider errors.",
+        "With another month, I would isolate verifier execution, add language-service symbol links, "
+        "and measure completion rates and review failures across several repositories and models.",
+    ],
 }
 
-BODY = ParagraphStyle("body", fontName="Helvetica", fontSize=10.5, leading=15.3, textColor=NAVY, spaceAfter=6)
-HEADING = ParagraphStyle("heading", fontName="Helvetica-Bold", fontSize=13.5, leading=17, textColor=NAVY, spaceBefore=11, spaceAfter=6)
-TITLE = ParagraphStyle("title", fontName="Helvetica-Bold", fontSize=31, leading=35, textColor=NAVY, spaceAfter=5)
-SUBTITLE = ParagraphStyle("subtitle", fontName="Helvetica", fontSize=13.5, leading=18, textColor=SLATE, spaceAfter=13)
-LABEL = ParagraphStyle("label", fontName="Helvetica-Bold", fontSize=9, leading=13, textColor=TEAL, spaceAfter=4)
-CELL = ParagraphStyle("cell", parent=BODY, fontSize=9.6, leading=13.0, spaceAfter=0)
-CELL_HEAD = ParagraphStyle("tableHead", parent=CELL, fontName="Helvetica-Bold", textColor=colors.white)
-NOTE = ParagraphStyle("note", parent=BODY, fontSize=9.4, leading=13, textColor=SLATE, spaceAfter=8)
+BODY = ParagraphStyle("body", fontName="Helvetica", fontSize=10.5, leading=14.2, textColor=colors.black, spaceAfter=6)
+HEADING = ParagraphStyle("heading", parent=BODY, fontName="Helvetica-Bold", fontSize=12, leading=16, spaceBefore=9, spaceAfter=5)
+TITLE = ParagraphStyle("title", parent=BODY, fontName="Helvetica-Bold", fontSize=28, leading=32, spaceAfter=5, alignment=TA_CENTER)
+SUBTITLE = ParagraphStyle("subtitle", parent=BODY, fontSize=12, leading=16, spaceAfter=4, alignment=TA_CENTER)
+NOTE = ParagraphStyle("note", parent=BODY, fontSize=9.5, leading=13, spaceAfter=4)
+TITLE_NOTE = ParagraphStyle("titleNote", parent=NOTE, alignment=TA_CENTER)
+CELL = ParagraphStyle("cell", parent=BODY, fontSize=10, leading=13.5, spaceAfter=0)
+CELL_HEAD = ParagraphStyle("tableHead", parent=CELL, fontName="Helvetica-Bold")
+CELL_TIME = ParagraphStyle("time", parent=CELL, fontName="Courier", fontSize=9.5)
 
 
 def para(text, style=BODY):
@@ -141,7 +138,7 @@ def link(label, url):
     parsed = urlsplit(url)
     if parsed.scheme not in ("http", "https") or not parsed.netloc:
         raise ValueError(f"{label} URL must use HTTP or HTTPS")
-    return f'<link href="{escape(url, quote=True)}" color="#006A64">{escape(label)}</link>'
+    return f'<link href="{escape(url, quote=True)}" color="black"><u>{escape(label)}</u></link>'
 
 
 def scorecard(evidence, width, final):
@@ -154,7 +151,7 @@ def scorecard(evidence, width, final):
     duration = evidence.get("video_seconds", 240)
     if type(duration) not in (int, float) or not 0 < duration <= 240:
         raise ValueError("video_seconds must be within the four-minute limit")
-    rows = [[para(name, CELL_HEAD) for name in ("Criterion", "Video", "One-line claim")]]
+    rows = [[para(name, CELL_HEAD) for name in ("Criterion", "Time", "Evidence")]]
     for code, name in CRITERIA:
         entry = scores.get(code, {})
         if not isinstance(entry, dict):
@@ -176,17 +173,17 @@ def scorecard(evidence, width, final):
         missing = "Unshown" if final else "Pending"
         rows.append([
             Paragraph(f"<b>{code}</b>  {escape(name)}", CELL),
-            para(timestamp or ("PDF" if code == "C2" and claim.strip() else missing), CELL),
+            para(timestamp or ("PDF" if code == "C2" and claim.strip() else missing), CELL_TIME),
             para(claim.strip() or "Evidence pending.", CELL),
         ])
-    table = Table(rows, colWidths=[152, 60, width - 212], repeatRows=1, hAlign="LEFT")
+    table = Table(rows, colWidths=[143, 51, width - 194], repeatRows=1, hAlign="LEFT")
     table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), NAVY),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [PALE, colors.white]),
-        ("LINEBELOW", (0, 0), (-1, 0), 1.6, TEAL),
-        ("LINEBELOW", (0, len(rows)-1), (-1, len(rows)-1), .65, RULE),
+        ("LINEBELOW", (0, 0), (-1, 0), .8, colors.black),
+        ("LINEBELOW", (0, 3), (-1, 3), .35, colors.black),
+        ("LINEBELOW", (0, 7), (-1, 7), .35, colors.black),
+        ("LINEBELOW", (0, -1), (-1, -1), .6, colors.black),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 9),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
         ("RIGHTPADDING", (0, 0), (-1, -1), 8),
         ("TOPPADDING", (0, 0), (-1, -1), 7),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
@@ -198,11 +195,12 @@ def draw_footer(canvas, document):
     canvas.saveState()
     width, _ = document.pagesize
     left, right = document.leftMargin + 6, width - document.rightMargin - 6
-    canvas.setStrokeColor(RULE)
+    canvas.setStrokeColor(colors.black)
+    canvas.setLineWidth(.35)
     canvas.line(left, 43, right, 43)
-    canvas.setFillColor(SLATE)
+    canvas.setFillColor(colors.black)
     canvas.setFont("Helvetica", 8.5)
-    canvas.drawString(left, 28, "Team OurLoss  /  Forge-a-thon Round 1")
+    canvas.drawString(left, 28, "OurLoss for VS Code")
     canvas.drawRightString(right, 28, str(document.page))
     canvas.restoreState()
 
@@ -212,7 +210,7 @@ def render(evidence, final=False):
         raise ValueError("Evidence must be a JSON object")
     output = BytesIO()
     document = SimpleDocTemplate(
-        output, pagesize=A4, rightMargin=57, leftMargin=57, topMargin=57, bottomMargin=64,
+        output, pagesize=A4, rightMargin=53, leftMargin=53, topMargin=49, bottomMargin=56,
         title="OurLoss for VS Code", author="Mehul Bhirud, Team OurLoss",
     )
     links = [link("Public repository", evidence.get("repo_url")), link("Demo video", evidence.get("demo_url"))]
@@ -220,18 +218,19 @@ def render(evidence, final=False):
     if not isinstance(status_label, str):
         raise ValueError("status_label must be text")
     story = [
-        para("TECHFEST IIT BOMBAY / TRUEFOUNDRY FORGE-A-THON", LABEL),
         para("OurLoss for VS Code", TITLE),
-        para("Verify selected changes before applying them", SUBTITLE),
+        para("Round 1 prototype documentation", SUBTITLE),
+        para("TrueFoundry Forge-a-thon, Techfest IIT Bombay", TITLE_NOTE),
     ]
     if status_label.strip():
-        story.append(para(status_label.strip(), LABEL))
+        story.append(para(status_label.strip(), TITLE_NOTE))
     if any(links):
-        story.append(Paragraph("  /  ".join(item for item in links if item), NOTE))
+        story.append(Paragraph("  /  ".join(item for item in links if item), TITLE_NOTE))
     story.extend(body(evidence, key, heading) for key, heading in SECTIONS[:5])
     story += [
         PageBreak(),
         para("6. Scorecard", HEADING),
+        para("Times refer to the edited demo.", NOTE),
         scorecard(evidence, document.width - 12, final),
         Spacer(1, 7),
         *(body(evidence, key, heading) for key, heading in SECTIONS[5:]),

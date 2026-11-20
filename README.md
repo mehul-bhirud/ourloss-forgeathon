@@ -4,6 +4,8 @@ OurLoss is a coding agent for TrueFoundry Forge-a-thon Round 1. It lets develope
 
 [See the verified review in VS Code](docs/selected-hunks.jpg)
 
+[Read the Round 1 write-up](docs/OurLoss-Round1.pdf)
+
 ## Run it
 
 Install VS Code 1.96 or later and Node 22.14 or later. Git is used for workspace indexing and the demo. Python is optional for syntax checks and required for the Flask demo.

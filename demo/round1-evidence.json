@@ -1,0 +1,50 @@
+{
+  "repo_url": "https://github.com/mehul-bhirud/ourloss-forgeathon",
+  "video_seconds": 201.88,
+  "context": [
+    "The extension ranks tracked and open text files using the full request, BM25-style term scores and filename matches. It looks for related tests and guides alongside the implementation. Explicit @file and @symbol mentions take priority. The panel shows the paths, line ranges, match reasons and bytes used.",
+    "The initial packet is capped at 2,400 UTF-8 bytes. That keeps the request small and can miss indirect relationships. The agent can search again or read narrow ranges. The default configuration defers the outline tool until needed. The recorded Task B preloaded its tools."
+  ],
+  "model_setup": [
+    "I used local Qwen3-4B-Instruct-2507 through Ollama for Tasks A and C. Local trials returned incomplete multi-file drafts, so I used Google-hosted Gemini 3.1 Flash-Lite for Task B. Gemini completed the recorded task with network latency and provider availability as constraints.",
+    "Set ourloss.model to the provider/model alias registered in TrueForge and ourloss.fallbackModel to the alternate alias. TrueForge holds the credentials. For Task C, I configured an unreachable primary endpoint and used Ollama as the fallback.",
+    "Development also tried local Ollama Qwen2.5 7B, Qwen2.5-Coder 7B and Qwen3 8B/14B. Hosted trials used Groq Qwen3.8 27B and GPT-OSS 20B/120B, Google Gemini 3.1/3.5 Flash-Lite and 3.6/3.8 Flash plus Gemma 4 31B, and OpenRouter Gemma 4 31B and Nemotron Ultra. Hosted attempts used free tiers, for approximately USD 0 in model API charges."
+  ],
+  "scores": {
+    "A1": {
+      "timestamp": "00:09",
+      "claim": "The native diff shows two reviewable hunks. At 00:35, FLASK_DEBUG=off returns False and all 19 behavior cases pass."
+    },
+    "A2": {
+      "timestamp": "03:03",
+      "claim": "From a request with no filenames, the agent edits source, a test and docs. All 59 CLI tests pass and flask config prints masked JSON."
+    },
+    "A3": {
+      "timestamp": "03:18",
+      "claim": "Cancelling a live turn leaves Git clean. A separate local host check received 105 text chunks before the turn finished."
+    },
+    "B1": {
+      "timestamp": "00:39",
+      "claim": "The panel shows why it chose the CLI source, test and docs. The initial context packet uses 2,395 of 2,400 bytes."
+    },
+    "B2": {
+      "timestamp": "02:49",
+      "claim": "The docs and test selection fails. At 02:53 the five-hunk selection passes. A host check verifies undo."
+    },
+    "B3": {
+      "timestamp": "03:15",
+      "claim": "The unreachable primary triggers the Ollama fallback. Rejecting the fallback draft leaves Git clean."
+    },
+    "B4": {
+      "timestamp": "02:59",
+      "claim": "The saved TrueForge session shows MCP reads, search and outline calls. TrueForge tool approval controls apply."
+    },
+    "C1": {
+      "timestamp": "00:00",
+      "claim": "The 3:22 recording shows A, B and C in order, each with on-screen verification."
+    },
+    "C2": {
+      "claim": "Sections 3 to 5 explain the approval gate, context budget and model choice. Section 8 records the remaining limits."
+    }
+  }
+}
